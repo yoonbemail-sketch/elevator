@@ -23,6 +23,35 @@ Open `index.html` in a browser (no build step).
 6. Collective / SCAN boarding — finish one direction before reversing (e.g. down calls 7→6→4→3→1)
 7. Metrics: avg/max wait (ticks), empty travel (floors), ticks, completed
 
+## Traffic parameters
+
+These three knobs shape the **passenger OD stream** (with the scenario seed). Changing any of them regenerates the scenario.
+
+### Traffic period
+
+Chooses **where trips start** (origin mix). Destinations still follow apartment rules (lobby ↔ upper, plus interfloor).
+
+| Period | Origin mix (approx.) | Typical story |
+| --- | --- | --- |
+| **Morning egress** | ~90% upper floors, ~10% lobby | Residents leave for work |
+| **Evening ingress** | ~90% lobby, ~10% upper | Residents come home |
+| **Midday / off-peak** | ~45% lobby, ~55% upper | Mixed daytime traffic |
+
+### Arrival rate
+
+Per-tick probability that **one new passenger** appears (Bernoulli trial). Default **15%** ≈ one arrival every ~6.7 ticks on average. At most one arrival per tick. This is a discrete-time stand-in for a Poisson arrival process; it is **not** exponential inter-arrival sampling.
+
+Higher rate → denser hall calls and more contention between cars.
+
+### Interfloor trips
+
+When a trip starts on an **upper floor**, this is the chance the destination is **another upper floor** instead of the lobby. Default **10%**.
+
+- Lobby origins always go to an upper floor (apartment ingress).
+- Upper origins: `(1 − interfloor%)` → lobby, `interfloor%` → other residential floor.
+
+Use a low value for “mostly go downstairs / come home”; raise it to stress mid-building stops.
+
 ## Ideas / later
 
 - **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
