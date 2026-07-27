@@ -16,15 +16,34 @@ boarding-sim 인터페이스를 따르는 틱 기반 엘리베이터 **대기 �
 
 ## 아파트 트래픽 (기본)
 
-- 2층 이상 출발 → 대부분 **1층(로비)** (interfloor %만 제외)
-- 1층 출발 → 대부분 **상부 주거층**
-- 시간대:
-  - **Morning egress**: 상부 → 로비
-  - **Evening ingress**: 로비 → 상부
-  - **Midday / off-peak**: 양방향
-- **Interfloor %**: 주거층↔주거층 통행 비중 (기본 10%)
-- 도착: 틱마다 Bernoulli(`arrivalRate`) — 이산 Poisson 근사
-- 오피스형 임의 OD는 이후 building-type 변수로 분리
+OD는 **아파트** 가정: 로비↔주거층이 기본, 주거층↔주거층은 interfloor만.
+
+### Traffic period (출발층 믹스)
+
+| 시간대 | 출발 분포 (대략) | 이야기 |
+| --- | --- | --- |
+| **Morning egress** | 상부 ~90% / 로비 ~10% | 출근·외출 |
+| **Evening ingress** | 로비 ~90% / 상부 ~10% | 귀가 |
+| **Midday / off-peak** | 로비 ~45% / 상부 ~55% | 주간 혼재 |
+
+목적지는 아래 규칙으로 뽑는다 (period와 독립).
+
+### Arrival rate (도착률)
+
+틱마다 **최대 1명**이 `p = arrivalRate`로 등장하는 Bernoulli 시행. 기본 **15%** → 평균 약 6.7틱에 1명. 연속시간 Poisson의 이산 근사(지수 간격 샘플링은 아님).
+
+시나리오 길이·혼잡도에 직접 영향. seed와 함께 시나리오 키에 포함.
+
+### Interfloor trips (층간 통행)
+
+**상부 출발**일 때 목적지가 로비가 아니라 **다른 상부층**일 확률. 기본 **10%**.
+
+- 로비 출발 → 항상 상부
+- 상부 출발 → `(1 − interfloor%)` 로비, `interfloor%` 다른 주거층
+
+낮추면 상하행(로비) 위주, 높이면 중간층 정차가 늘어난다.
+
+오피스형 임의 OD는 이후 building-type 변수로 분리.
 
 ## 배차 / 탑승
 
