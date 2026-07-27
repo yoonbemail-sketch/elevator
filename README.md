@@ -20,3 +20,7 @@ Open `index.html` in a browser (no build step).
 3. **Compare all** — headless strategy table on one scenario
 4. Apartment traffic: morning / evening / midday + interfloor %
 5. Metrics: avg/max wait, empty travel, ticks
+
+## Ideas / later
+
+- **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
