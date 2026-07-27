@@ -22,6 +22,32 @@ Open `index.html` in a browser (no build step).
 5. Building view: **Out** (alighted) · shafts · **Hall** (waiting), hover tooltips
 6. Collective / SCAN boarding — finish one direction before reversing (e.g. down calls 7→6→4→3→1)
 7. Metrics: avg/max wait (ticks), empty travel (floors), ticks, completed
+8. **Batch N** — Monte Carlo over many seeds; CSV log + summary ranking
+
+## Strategy catalog
+
+There is **no universal optimal parking strategy**. Like airplane boarding methods (WilMA, back-to-front, random), elevator idle placement is a catalog of policies whose ranking depends on traffic regime.
+
+### Baselines in this demo
+
+| Strategy | Idle cars go to… | Typical fit |
+| --- | --- | --- |
+| **Stay** | Last stop (no reposition) | Reactive baseline; cheap empty travel |
+| **Lobby** | Floor 1 | Up-peak / evening ingress |
+| **Mid** | Building midpoint | Generic compromise |
+| **Spread** | Even home floors along the shaft | Down-peak / egress — cover upper arrivals |
+| **Demand** | Recent call-heat floors (spread coverage) | Adaptive heuristic toward busy landings |
+
+### Research / industry directions (not all coded)
+
+| Approach | Idea | Notes |
+| --- | --- | --- |
+| Arrival-probability parking | Park proportional to expected origin mass (INC/INT/OUT weighted) | Generalizes lobby vs spread by traffic mix |
+| MDP / DP lobby count | How *many* cars to keep at lobby in up-peak | Rate- and height-dependent (MERL-style) |
+| Proactive standby score | Balance expected wait vs energy to choose standby floors | Complements any dispatcher |
+| **Service zoning** | Odd/even or low/high banks | Dominates when saturated — cars rarely park |
+
+Modern practice is **regime-aware**: park under light/medium idle time; **zone** when the bank is always busy. Use **Batch N** to rank baselines over many seeds for a fixed traffic setting.
 
 ## Traffic parameters
 
@@ -60,8 +86,14 @@ Under **saturated** traffic, cars are almost always busy — they rarely park �
 
 This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — a hint that zoning, not parking, is the next experiment when the building is always full.
 
+### Batch experiment
+
+**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat.
+
 ## Ideas / later
 
+- **Arrival-probability parking** — park from INC/INT/OUT-weighted origin distribution
+- **Dynamic lobby count** — MDP-style how many cars stay at lobby in up-peak
 - **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
 - **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
 - Building type (office OD), floor population weights, car speed (floors/tick), batch arrivals, energy metrics

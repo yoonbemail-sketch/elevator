@@ -68,12 +68,29 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 이 데모는 고정 시나리오에서 **파킹만** 비교한다. Arrival rate를 올려 Compare all 하면 전략 간 차이가 줄어드는 경우가 많은데, 그건 “붐빌 때는 파킹이 아니라 존”이라는 힌트다.
 
+## 전략 카탈로그
+
+비행기 boarding(WilMA, back-to-front 등)처럼 **만능 1등 전략은 없다**. 트래픽 레짐에 따라 순위가 바뀐다.
+
+| 전략 | 유휴 차 | 전형적 적합 |
+| --- | --- | --- |
+| Stay | 마지막 정차층 | 반응형 베이스라인 |
+| Lobby | 1층 | 상행 피크(귀가) |
+| Mid | 중간층 | 절충 |
+| Spread | 축을 따라 균등 홈 | 하행 피크(출근) |
+| Demand | call-heat 쪽 | 적응 휴리스틱 |
+
+연구/산업 쪽: arrival-probability parking, up-peak MDP 로비 대수, proactive standby, **zoning**(포화 시).
+
+**Batch N**: 현재 노브로 seed N개를 돌려 전략 mean/win-rate·CSV 로그를 만든다.
+
 ## 조절 가능 파라미터
 
-Parking strategy, scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target, sim speed
+Parking strategy, scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target, sim speed, batch N
 
 ## 이후 확장
 
+- **Arrival-probability parking** / **dynamic lobby count** (MDP)
 - **서비스 존** (홀수/짝수·저/고층) — 고부하 건물의 파킹 보완 레버
 - **층별 홀 capacity** (로비 vs 상층 대기 상한)
 - Building type (office), 층별 인구 가중치, 카 속도(층/틱), 묶음 도착, 에너지 지표
