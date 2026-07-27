@@ -8,6 +8,11 @@ Forked from [boarding-sim](https://codingapple1.github.io/boarding-sim/) UI patt
 
 Open `index.html` in a browser (no build step).
 
+### Hosting
+
+- **Temporary live preview** (while the cloud agent tunnel is up): see the latest agent message / PR for the trycloudflare URL.
+- **Permanent**: enable GitHub Pages once — Settings → Pages → Source: **GitHub Actions**. The workflow in `.github/workflows/pages.yml` deploys on push to `main`.
+
 ## Features
 
 1. Parking strategies: Stay / Lobby / Mid / Spread / Demand
