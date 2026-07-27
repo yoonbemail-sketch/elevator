@@ -1,8 +1,8 @@
 # Elevator Parking Simulator
 
-Tick-based simulator for **where idle elevators should wait**.
+Tick-based simulator for **where idle elevators should wait** in an **apartment** building.
 
-Forked from [boarding-sim](https://codingapple1.github.io/boarding-sim/) UI patterns (strategy dropdown, params, tick loop, dashboard).
+Forked from [boarding-sim](https://codingapple1.github.io/boarding-sim/) UI patterns.
 
 ## Run
 
@@ -10,12 +10,12 @@ Open `index.html` in a browser (no build step).
 
 ### Hosting
 
-- **Temporary live preview** (while the cloud agent tunnel is up): see the latest agent message / PR for the trycloudflare URL.
-- **Permanent**: enable GitHub Pages once — Settings → Pages → Source: **GitHub Actions**. The workflow in `.github/workflows/pages.yml` deploys on push to `main`.
+- Portfolio: `/elevator/index.html` on the Vercel site
+- Permanent Pages: enable GitHub Actions Pages when ready (`.github/workflows/pages.yml`)
 
 ## Features
 
 1. Parking strategies: Stay / Lobby / Mid / Spread / Demand
-2. Peak modes: Mixed / Up-peak / Down-peak / Lunch
-3. Configurable floors, elevator count, capacity, arrival rate
-4. Metrics: avg/max wait, completed trips, empty travel distance
+2. Apartment traffic: morning egress, evening ingress, midday
+3. Interfloor % + door dwell controls
+4. Metrics: avg/max wait, completed trips, empty travel

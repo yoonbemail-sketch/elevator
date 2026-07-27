@@ -2,63 +2,33 @@
 
 boarding-sim 인터페이스를 따르는 틱 기반 엘리베이터 **대기 배치(파킹)** 시뮬레이터.
 
+기본 건물은 **아파트**다.
+
 ## 목표
 
 유휴 엘리베이터를 **어느 층에 보내 대기시킬지**에 따라 운용 효율이 어떻게 달라지는지 시각적으로 비교한다.
 
-핵심 질문: *엘레베이터를 어느 층으로 보내 놔야 가장 효율적인 운용이 가능한가?*
+## 아파트 트래픽 (기본)
+
+- 2층 이상 출발 → 대부분 **1층(로비)** (interfloor %만 제외)
+- 1층 출발 → 대부분 **상부 주거층**
+- 시간대:
+  - **Morning egress**: 상부 → 로비
+  - **Evening ingress**: 로비 → 상부
+  - **Midday / off-peak**: 양방향
+- **Interfloor %**: 주거층↔주거층 통행 비중 (기본 10%)
+- 오피스형 임의 OD는 이후 building-type 변수로 분리
 
 ## 핵심 지표
 
-- **Avg Wait (Ticks)**: 승객이 호출 후 엘리베이터에 탈 때까지 평균 대기
-- **Max Wait (Ticks)**: 최대 대기
-- **Avg Ride (Ticks)**: 탑승 후 도착까지 평균 이동
-- **Empty Travel**: 빈 차로 이동한 층 거리 합 (파킹 비용)
-- **Completed**: 목적지에 도착한 승객 수 / 목표 수
+- Avg / Max Wait
+- Completed
+- Empty Travel
 
-## 환경 (조절 가능)
+## 조절 가능 파라미터
 
-| 파라미터 | 의미 | 기본 |
-|----------|------|------|
-| Floors | 건물 층수 | 20 |
-| Elevators | 엘리베이터 대수 | 4 |
-| Capacity | 정원 | 8 |
-| Arrival rate | 틱당 승객 발생 확률 | 중 |
-| Peak mode | 트래픽 패턴 | Mixed |
-| Speed | 시뮬레이션 TPS | 10 |
-| Target passengers | 완료 목표 인원 | 80 |
-
-## 피크 모드 (승객 OD)
-
-- **Mixed**: 임의 출발/도착
-- **Up-peak** (출근): 대부분 로비(1층) → 상부 층
-- **Down-peak** (퇴근): 대부분 상부 → 로비
-- **Lunch**: 중간층 ↔ 로비/식당층(중간) 왕래 비중 높음
-
-## 파킹 전략 (Strategy)
-
-유휴 상태일 때 목적 대기층 결정:
-
-1. **Stay** — 마지막 정차 층에 그대로 대기
-2. **Lobby** — 모두 1층(로비)으로 복귀
-3. **Mid** — 건물 중간 층으로 이동
-4. **Spread** — 대수만큼 층을 균등 분할해 각자 홈 층에 대기
-5. **Demand** — 최근 홀 콜이 많았던 층 쪽으로 배치
-
-## 시뮬레이션 루프 (틱)
-
-1. 피크 모드에 따라 새 승객(홀 콜) 확률 생성
-2. 각 엘리베이터: 문 열림/탑승·하차 → 다음 목적지 결정 → 1층 이동
-3. 할당할 콜이 없으면 파킹 전략으로 대기층 이동
-4. 목표 완료 인원 도달 시 정지
-
-## UI (boarding-sim 패턴)
-
-- 사이드바: 전략 드롭다운, 건물/대수/피크/속도 슬라이더, Start/Pause/Reset
-- 대시보드: Avg Wait / Max Wait / Completed / Empty Travel
-- 시각화: 세로 건물 + 샤프트별 엘리베이터 칸 + 층별 대기 승객
-- 범례: Waiting / Riding / Idle car / Parking move
+Parking strategy, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target, sim speed
 
 ## 이후 확장
 
-승객 특성(짐·우선순위), 층별 인구 가중치, 스카이로비, 존 분할 디스패치, 에너지 지표 등.
+Building type (office), 층별 인구 가중치, 카 속도(층/틱), 묶음 도착, 에너지 지표
