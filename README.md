@@ -52,7 +52,16 @@ When a trip starts on an **upper floor**, this is the chance the destination is 
 
 Use a low value for “mostly go downstairs / come home”; raise it to stress mid-building stops.
 
+## Insight: when parking matters
+
+Parking strategies matter when cars spend time **idle**. Under light or moderate traffic, empty-travel and wait times move with Stay / Lobby / Mid / Spread / Demand.
+
+Under **saturated** traffic, cars are almost always busy — they rarely park — so parking policy has little room to act. The useful lever shifts to **service zoning** (e.g. odd/even floors, low/high banks): fewer stops per trip, less door dwell waste, shorter round trips.
+
+This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — a hint that zoning, not parking, is the next experiment when the building is always full.
+
 ## Ideas / later
 
+- **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
 - **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
 - Building type (office OD), floor population weights, car speed (floors/tick), batch arrivals, energy metrics
