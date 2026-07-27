@@ -21,8 +21,9 @@ Open `index.html` in a browser (no build step).
 4. Apartment traffic: morning / evening / midday + interfloor %
 5. Building view: **Out** (alighted) · shafts · **Hall** (waiting), hover tooltips
 6. Collective / SCAN boarding — finish one direction before reversing (e.g. down calls 7→6→4→3→1)
-7. Metrics: avg/max wait (ticks), empty travel (floors), ticks, completed
+7. Metrics: avg/max wait (ticks), empty travel (floors), **IdleFrac** (saturation), ticks, completed
 8. **Batch N** — Monte Carlo over many seeds; CSV log + summary ranking
+9. Controls split into **Policy** (parking; future zoning) vs **Environment** (building/traffic/seed) vs **Playback**
 
 ## Strategy catalog
 
@@ -82,13 +83,15 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 Parking strategies matter when cars spend time **idle**. Under light or moderate traffic, empty-travel and wait times move with Stay / Lobby / Mid / Spread / Demand.
 
+**IdleFrac** = (elevator-ticks in IDLE or PARKING) / (ticks × elevators). Live and Batch show this as a saturation diagnostic with a regime chip: **≥25%** → `parking-sensitive`, **&lt;10%** → `saturated` (zoning-sensitive hint), otherwise `mixed`. Ranking still uses avg wait (or the Rank-by toggle); IdleFrac is not an objective.
+
 Under **saturated** traffic, cars are almost always busy — they rarely park — so parking policy has little room to act. The useful lever shifts to **service zoning** (e.g. odd/even floors, low/high banks): fewer stops per trip, less door dwell waste, shorter round trips.
 
-This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — a hint that zoning, not parking, is the next experiment when the building is always full.
+This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — and IdleFrac drop — a hint that zoning, not parking, is the next experiment when the building is always full.
 
 ### Batch experiment
 
-**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat.
+**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / Idle% / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat.
 
 ## Ideas / later
 
