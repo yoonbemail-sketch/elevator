@@ -60,11 +60,20 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 - Empty Travel (floors)
 - Ticks / Completed
 
+## Insight: 파킹이 먹히는 때
+
+유휴 구간이 있을 때 파킹 전략이 의미 있다. 한산·중간 부하에서는 Stay/Lobby/Mid/Spread/Demand가 avg wait·empty travel을 가른다.
+
+**항상 풀가동**에 가까우면 차는 거의 파킹하지 않으므로 파킹 효과가 작아진다. 이때는 **서비스 존 분할**(홀수/짝수층, 저층/고층 뱅크)로 정차 수·도어 시간·왕복 거리를 줄이는 편이 낫다.
+
+이 데모는 고정 시나리오에서 **파킹만** 비교한다. Arrival rate를 올려 Compare all 하면 전략 간 차이가 줄어드는 경우가 많은데, 그건 “붐빌 때는 파킹이 아니라 존”이라는 힌트다.
+
 ## 조절 가능 파라미터
 
 Parking strategy, scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target, sim speed
 
 ## 이후 확장
 
+- **서비스 존** (홀수/짝수·저/고층) — 고부하 건물의 파킹 보완 레버
 - **층별 홀 capacity** (로비 vs 상층 대기 상한)
 - Building type (office), 층별 인구 가중치, 카 속도(층/틱), 묶음 도착, 에너지 지표
