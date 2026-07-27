@@ -16,6 +16,7 @@ Open `index.html` in a browser (no build step).
 ## Features
 
 1. Parking strategies: Stay / Lobby / Mid / Spread / Demand
-2. Apartment traffic: morning egress, evening ingress, midday
-3. Interfloor % + door dwell controls
-4. Metrics: avg/max wait, completed trips, empty travel
+2. **Fixed scenario seed** — same passenger stream across runs
+3. **Compare all** — headless strategy table on one scenario
+4. Apartment traffic: morning / evening / midday + interfloor %
+5. Metrics: avg/max wait, empty travel, ticks
