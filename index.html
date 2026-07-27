@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boarding Simulation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Elevator Parking Simulator</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,47 +12,70 @@
         <aside class="sidebar">
             <div class="sidebar-top">
                 <div class="logo">
-                    <p>Boarding Simulator</p>
+                    <p>Elevator Parking</p>
+                    <span class="logo-sub">대기 배치 시뮬레이터</span>
                 </div>
                 <button class="mobile-toggle" id="mobile-toggle" aria-label="Toggle Controls">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                 </button>
             </div>
-            <div style="flex-grow: 1;" class="spacer"></div>            
+            <div class="spacer"></div>
             <div class="controls" id="sim-controls">
                 <div class="control-group">
-                    <label for="strategy-select">Boarding Strategy</label>
+                    <label for="strategy-select">Parking Strategy</label>
                     <select id="strategy-select">
-                        <option value="random">Random</option>
-                        <option value="b2f">Back-to-Front</option>
-                        <option value="block">Block (21-30 &rarr; 11-20 &rarr; 1-10)</option>
-                        <option value="wilma">Outside-In (Wilma)</option>
-                        <option value="no-assigned">No Assigned Seats</option>
-                        <option value="steffen">Steffen Method</option>
+                        <option value="stay">Stay (마지막 층 대기)</option>
+                        <option value="lobby">Lobby (1층 복귀)</option>
+                        <option value="mid">Mid (중간층 대기)</option>
+                        <option value="spread">Spread (균등 분산)</option>
+                        <option value="demand">Demand (콜 많은 층)</option>
                     </select>
                 </div>
 
                 <div class="control-group">
-                    <label for="baggage-prob">Baggage Probability</label>
-                    <input type="range" id="baggage-prob" min="0" max="100" value="80">
-                    <span class="range-value" id="baggage-prob-val">80%</span>
+                    <label for="peak-select">Peak Mode</label>
+                    <select id="peak-select">
+                        <option value="mixed">Mixed</option>
+                        <option value="up">Up-peak (출근)</option>
+                        <option value="down">Down-peak (퇴근)</option>
+                        <option value="lunch">Lunch</option>
+                    </select>
                 </div>
 
                 <div class="control-group">
-                    <label for="baggage-time">Baggage Time (Ticks)</label>
-                    <input type="range" id="baggage-time" min="0" max="10" value="3">
-                    <span class="range-value" id="baggage-time-val">3</span> 
+                    <label for="floors-range">Floors</label>
+                    <input type="range" id="floors-range" min="8" max="40" value="20">
+                    <span class="range-value" id="floors-val">20</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="elevators-range">Elevators</label>
+                    <input type="range" id="elevators-range" min="1" max="8" value="4">
+                    <span class="range-value" id="elevators-val">4</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="capacity-range">Capacity</label>
+                    <input type="range" id="capacity-range" min="4" max="16" value="8">
+                    <span class="range-value" id="capacity-val">8</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="arrival-range">Arrival Rate</label>
+                    <input type="range" id="arrival-range" min="5" max="40" value="15">
+                    <span class="range-value" id="arrival-val">15%</span>
+                </div>
+
+                <div class="control-group">
+                    <label for="target-range">Target Passengers</label>
+                    <input type="range" id="target-range" min="20" max="200" value="80" step="10">
+                    <span class="range-value" id="target-val">80</span>
                 </div>
 
                 <div class="control-group">
                     <label for="sim-speed">Simulation Speed</label>
-                    <input type="range" id="sim-speed" min="1" max="60" value="10">
+                    <input type="range" id="sim-speed" min="1" max="40" value="10">
                     <span class="range-value" id="sim-speed-val">10 TPS</span>
-                </div>
-
-                <div class="control-group" style="flex-direction: row; align-items: center; gap: 8px; margin-top: 8px;">
-                    <input type="checkbox" id="spooky-mode" style="width: auto;">
-                    <label for="spooky-mode" style="cursor: pointer; font-weight: 600; color: #f59e0b;">스피키 모드</label>
                 </div>
 
                 <div class="action-buttons">
@@ -65,37 +88,40 @@
 
         <main class="simulation-area">
             <div class="dashboard">
-                <div class="stat-card"> 
-                    <span class="stat-label">Total time (Ticks)</span>
-                    <span class="stat-value" id="stat-ticks">0</span>
+                <div class="stat-card">
+                    <span class="stat-label">Avg Wait</span>
+                    <span class="stat-value" id="stat-avg-wait">0</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">Progress</span>
-                    <span class="stat-value" id="stat-boarded">0 / 180</span>
+                    <span class="stat-label">Max Wait</span>
+                    <span class="stat-value" id="stat-max-wait">0</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Completed</span>
+                    <span class="stat-value" id="stat-completed">0 / 80</span>
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-label">줄이 멈춘 시간 (Ticks)</span>
-                    <span class="stat-value" id="stat-bottlenecks">0</span>
+                    <span class="stat-label">Empty Travel</span>
+                    <span class="stat-value" id="stat-empty">0</span>
                 </div>
             </div>
 
-            <div class="plane-wrapper">
-                <div class="plane-nose"></div>
-                <div class="plane-body" id="plane-grid">
-                    <!-- Grid generated by JS -->
+            <div class="building-wrapper">
+                <div class="building" id="building">
+                    <!-- generated by JS -->
                 </div>
-                <div class="plane-tail"></div>
             </div>
         </main>
-        
+
         <div class="legend">
-            <div class="legend-item"><div class="blob empty-seat"></div> Empty Seat</div>
-            <div class="legend-item"><div class="blob seated"></div> Seated</div>
-            <div class="legend-item"><div class="blob stowing"></div> Stowing baggage</div>
-            <div class="legend-item"><div class="blob waiting"></div> Blocked by seats</div>
+            <div class="legend-item"><div class="blob waiting"></div> Waiting</div>
+            <div class="legend-item"><div class="blob riding"></div> Riding</div>
+            <div class="legend-item"><div class="blob idle-car"></div> Idle</div>
+            <div class="legend-item"><div class="blob parking-car"></div> Parking move</div>
+            <div class="legend-item"><div class="blob busy-car"></div> Serving</div>
         </div>
     </div>
 
