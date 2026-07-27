@@ -1,11 +1,21 @@
-# boarding-sim
+# Elevator Parking Simulator
 
-Tick-based airplane boarding simulator.
-https://codingapple1.github.io/boarding-sim/
+Tick-based simulator for **where idle elevators should wait**.
 
+Forked from [boarding-sim](https://codingapple1.github.io/boarding-sim/) UI patterns (strategy dropdown, params, tick loop, dashboard).
 
-1. Simulate different boarding strategies
-2. Baggage time, seat interference time
-3. Count bottleneck delays
-4. 스피키 mode
+## Run
 
+Open `index.html` in a browser (no build step).
+
+### Hosting
+
+- **Temporary live preview** (while the cloud agent tunnel is up): see the latest agent message / PR for the trycloudflare URL.
+- **Permanent**: enable GitHub Pages once — Settings → Pages → Source: **GitHub Actions**. The workflow in `.github/workflows/pages.yml` deploys on push to `main`.
+
+## Features
+
+1. Parking strategies: Stay / Lobby / Mid / Spread / Demand
+2. Peak modes: Mixed / Up-peak / Down-peak / Lunch
+3. Configurable floors, elevator count, capacity, arrival rate
+4. Metrics: avg/max wait, completed trips, empty travel distance
