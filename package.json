@@ -1,0 +1,25 @@
+{
+  "name": "elevator",
+  "version": "1.0.0",
+  "description": "Tick-based simulator for **where idle elevators should wait** in an **apartment** building.",
+  "main": "script.js",
+  "scripts": {
+    "batch": "node tools/run-batch.mjs",
+    "batch:sticky": "node tools/run-batch.mjs --dispatch sticky --n 100 --seed 42 --out benchmarks/sticky-n100-seed42",
+    "batch:reassign": "node tools/run-batch.mjs --dispatch reassign --n 100 --seed 42 --out benchmarks/reassign-n100-seed42"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoonbemail-sketch/elevator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yoonbemail-sketch/elevator/issues"
+  },
+  "homepage": "https://github.com/yoonbemail-sketch/elevator#readme",
+  "dependencies": {
+    "linkedom": "^0.18.13"
+  }
+}

@@ -97,11 +97,11 @@ Under **saturated** traffic, cars are almost always busy — they rarely park �
 
 ### Sticky hall-call assignment
 
-Dispatch is nearest-car cost at passenger arrival; **assignments stick**. A later closer IDLE does not steal the call. SCAN delays opposite-direction pickups until the assigned car finishes its current direction.
+Dispatch is nearest-car cost at passenger arrival. **Sticky** keeps the first car; **Reassign** (Policy → Hall dispatch) rescores waiting hall calls each tick so nearer IDLE can steal.
 
-**Example** (seed 42, Stay, evening, tick 650, IdleFrac 62%): E1 MOVING @9↑ load 4 holds pickup `#76 @16→L1`, while **E3/E4 IDLE @20** are closer to 16. Cost *now* prefers E3/E4, but `#76` was assigned at `arr=619` and never moved. Full snapshot in [INSIGHTS.md §3](INSIGHTS.md#3-sticky-hall-call-assignment).
+**Example** (seed 42, Stay, evening, sticky, tick ~650, IdleFrac 62%): E1 MOVING ↑ holds pickup `#76 @16→L1`, while **E3/E4 IDLE @20** are closer. Full snapshot + **Batch N=100 sticky vs reassign table** in [INSIGHTS.md §3](INSIGHTS.md#3-sticky-vs-reassign-hall-call-dispatch).
 
-Parking and **call reassignment** are separate levers. High IdleFrac + long waits often means free cars exist, but sticky dispatch will not hand them the call.
+**Method.** Before changing a Policy lever, run Batch N=100 and save under `benchmarks/` (`npm run batch:sticky` / `batch:reassign`), then compare. On default evening, reassign cut Stay max wait but was not a free lunch on mean wait (Mid got worse).
 
 ### Batch experiment
 
@@ -109,9 +109,8 @@ Parking and **call reassignment** are separate levers. High IdleFrac + long wait
 
 ## Ideas / later
 
-- **Hall-call reassignment** — re-score unboarded assignments each tick so nearer idle cars can steal sticky calls
+- **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
 - **Arrival-probability parking** — park from INC/INT/OUT-weighted origin distribution
 - **Dynamic lobby count** — MDP-style how many cars stay at lobby in up-peak
-- **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
 - **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
 - Building type (office OD), floor population weights, car speed (floors/tick), batch arrivals, energy metrics

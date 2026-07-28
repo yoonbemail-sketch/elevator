@@ -83,13 +83,15 @@ Batch N / Rank-by 로 레짐별 베이스라인 측정
 
 이 데모는 고정 시나리오에서 **파킹만** 비교한다.
 
-## Insight: sticky 홀콜 배정
+## Insight: sticky vs reassign 홀콜 배정
 
-배정은 승객이 생긴 **그 순간의** nearest-car cost다. **한 번 붙으면 고정** — 나중에 더 가까운 IDLE이 생겨도 홀콜을 뺏지 않는다. SCAN이면 맡은 차가 현재 방향을 끝낸 뒤에야 반대 방향 픽업을 태울 수 있다.
+배정은 승객이 생긴 **그 순간의** nearest-car cost다. **Sticky**는 한 번 붙이면 고정, **Reassign**(Policy → Hall dispatch)은 매 틱 대기 홀콜을 다시 스코어한다.
 
-**예시** (seed 42, Stay, evening, tick 650, IdleFrac 62%): E1이 9층↑ load 4로 `#76 @16→L1`을 들고 있는데 **E3/E4는 20층 IDLE** — 16층까지는 E3/E4가 더 가깝다. `#76`은 `arr=619`에 E1에 붙었고 재배정되지 않음. 전체 스냅샷은 [`INSIGHTS.md` §3](INSIGHTS.md#3-sticky-hall-call-assignment).
+**예시** (seed 42, Stay, evening, sticky, tick ~650, IdleFrac 62%): E1이 `#76 @16→L1`을 들고 있는데 **E3/E4는 20층 IDLE**. 전체 스냅샷 + Batch N=100 sticky↔reassign 표는 [`INSIGHTS.md` §3](INSIGHTS.md#3-sticky-vs-reassign-hall-call-dispatch).
 
-파킹(유휴 배치)과 **콜 재배정**은 다른 레버다. IdleFrac↑·대기↑면 “빈 차는 있는데 sticky dispatch가 안 넘긴다”.
+**방법.** Policy를 바꾸기 전에 Batch N=100을 `benchmarks/`에 저장한 뒤 한 가지만 바꾸고 다시 돌린다. 기본 evening에서는 reassign이 Stay max wait는 줄였지만 mean wait “공짜 개선”은 아님(Mid는 악화).
+
+파킹(유휴 배치)과 **콜 배정**은 다른 레버다.
 
 ## 전략 카탈로그
 
@@ -109,14 +111,13 @@ Batch N / Rank-by 로 레짐별 베이스라인 측정
 
 ## 조절 가능 파라미터
 
-**Policy**: Parking strategy (future: zoning)  
+**Policy**: Parking strategy, Hall dispatch (sticky | reassign); future: zoning  
 **Environment**: scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target  
 **Playback**: sim speed; batch N
 
 ## 이후 확장
 
-- **홀콜 재배정** — 미탑승 배정을 매 틱 재스코어해 더 가까운 IDLE이 콜을 가져가게
-- **Arrival-probability parking** / **dynamic lobby count** (MDP)
 - **서비스 존** (홀수/짝수·저/고층) — 고부하 건물의 파킹 보완 레버
+- **Arrival-probability parking** / **dynamic lobby count** (MDP)
 - **층별 홀 capacity** (로비 vs 상층 대기 상한)
 - Building type (office), 층별 인구 가중치, 카 속도(층/틱), 묶음 도착, 에너지 지표
