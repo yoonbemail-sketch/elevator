@@ -82,7 +82,7 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 ## Insights (summary)
 
-Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** — four takeaways, **PR-checked capability tree**, Batch A/B, scope freeze.
+Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** · **[한국어](INSIGHTS.ko.md)** — four takeaways, capability tree, Batch A/B, scope freeze.
 
 1. **No universal parking winner** — regime-dependent (Batch + Rank-by).
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).

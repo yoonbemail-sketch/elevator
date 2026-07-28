@@ -65,7 +65,7 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 ## Insights (wrap-up)
 
-원본: [`INSIGHTS.md`](INSIGHTS.md) — 포트폴리오용 **스코프 동결** + merged PR 대조 트리.
+원본: [`INSIGHTS.md`](INSIGHTS.md) · [`INSIGHTS.ko.md`](INSIGHTS.ko.md) — 포트폴리오용 **스코프 동결**.
 
 1. 만능 파킹 없음 — 레짐별 Batch / Rank-by
 2. IdleFrac로 parking-sensitive vs saturated (포화 시 zoning)
