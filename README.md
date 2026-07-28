@@ -82,11 +82,11 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 ## Insights (summary)
 
-Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** — four takeaways, tree, Batch A/B table, scope freeze.
+Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** — four takeaways, **PR-checked capability tree**, Batch A/B, scope freeze.
 
 1. **No universal parking winner** — regime-dependent (Batch + Rank-by).
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
-3. **Dispatch ≠ parking** — sticky orphans vs reassign thrash (Mid worse on N=100).
+3. **Dispatch ≠ parking** — SCAN / same-dir boarding under the hood; sticky orphans vs reassign thrash (Mid worse on N=100).
 4. **Batch before/after** one Policy change; stop before over-processing dispatch.
 
 ### When parking matters
