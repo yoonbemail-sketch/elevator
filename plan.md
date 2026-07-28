@@ -56,17 +56,20 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 ## 핵심 지표
 
-- Avg / Max Wait (ticks)
+- Avg / Max Wait (ticks) — 서비스 품질 / 랭킹 1차 목표
 - Empty Travel (floors)
+- **IdleFrac** — IDLE|PARKING car-ticks / (ticks × elevators). 포화도 진단. ≥25% parking-sensitive, &lt;10% saturated, 그 사이 mixed
 - Ticks / Completed
+
+컨트롤은 **Policy**(파킹; 이후 zoning) / **Environment**(건물·트래픽·seed) / **Playback**(속도)로 나뉜다.
 
 ## Insight: 파킹이 먹히는 때
 
-유휴 구간이 있을 때 파킹 전략이 의미 있다. 한산·중간 부하에서는 Stay/Lobby/Mid/Spread/Demand가 avg wait·empty travel을 가른다.
+유휴 구간이 있을 때 파킹 전략이 의미 있다. 한산·중간 부하에서는 Stay/Lobby/Mid/Spread/Demand가 avg wait·empty travel을 가른다. IdleFrac가 높을수록 파킹이 레짐을 가른다.
 
 **항상 풀가동**에 가까우면 차는 거의 파킹하지 않으므로 파킹 효과가 작아진다. 이때는 **서비스 존 분할**(홀수/짝수층, 저층/고층 뱅크)로 정차 수·도어 시간·왕복 거리를 줄이는 편이 낫다.
 
-이 데모는 고정 시나리오에서 **파킹만** 비교한다. Arrival rate를 올려 Compare all 하면 전략 간 차이가 줄어드는 경우가 많은데, 그건 “붐빌 때는 파킹이 아니라 존”이라는 힌트다.
+이 데모는 고정 시나리오에서 **파킹만** 비교한다. Arrival rate를 올려 Compare all 하면 전략 간 차이가 줄어들고 IdleFrac가 떨어지는 경우가 많은데, 그건 “붐빌 때는 파킹이 아니라 존”이라는 힌트다.
 
 ## 전략 카탈로그
 
@@ -86,7 +89,9 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 ## 조절 가능 파라미터
 
-Parking strategy, scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target, sim speed, batch N
+**Policy**: Parking strategy (future: zoning)  
+**Environment**: scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target  
+**Playback**: sim speed; batch N
 
 ## 이후 확장
 
