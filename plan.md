@@ -63,35 +63,24 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 컨트롤은 **Policy**(파킹; 이후 zoning) / **Environment**(건물·트래픽·seed) / **Playback**(속도)로 나뉜다.
 
-## Insights (요약)
+## Insights (wrap-up)
 
-운영 인사이트 **업데이트 트리 + 예시**는 [`INSIGHTS.md`](INSIGHTS.md)가 원본이다.
+원본: [`INSIGHTS.md`](INSIGHTS.md) — 포트폴리오용으로 **여기서 스코프 동결**.
 
-```text
-Environment → IdleFrac → Parking | Zoning(미래)
-                └─ sticky 홀콜 배정 → 재배정(미래)
-Batch N / Rank-by 로 레짐별 베이스라인 측정
-```
+1. 만능 파킹 없음 — 레짐별 Batch / Rank-by
+2. IdleFrac로 parking-sensitive vs saturated (포화 시 zoning)
+3. 파킹 ≠ 홀 배정 — sticky 고아 콜 vs reassign이 Mid mean wait를 악화(근시안 idle steal)
+4. Policy 하나 바꿀 때마다 Batch N=100 before/after
+
+idle-steal 등 dispatch 추가 변형은 하지 않음.
 
 ## Insight: 파킹이 먹히는 때
 
-유휴 구간이 있을 때 파킹 전략이 의미 있다. 한산·중간 부하에서는 Stay/Lobby/Mid/Spread/Demand가 avg wait·empty travel을 가른다. IdleFrac가 높을수록 파킹이 레짐을 가른다.
+유휴가 있을 때만 파킹이 갈라진다. Arrival↑ → Compare 차이↓·IdleFrac↓ → 포화면 존이 다음 레버. 데모는 파킹만 비교.
 
-**항상 풀가동**에 가까우면 차는 거의 파킹하지 않으므로 파킹 효과가 작아진다. 이때는 **서비스 존 분할**(홀수/짝수층, 저층/고층 뱅크)로 정차 수·도어 시간·왕복 거리를 줄이는 편이 낫다.
+## Insight: sticky vs reassign
 
-**예시.** 같은 seed에서 arrival rate를 올리고 Compare all → 전략 간 차이↓, IdleFrac↓.
-
-이 데모는 고정 시나리오에서 **파킹만** 비교한다.
-
-## Insight: sticky vs reassign 홀콜 배정
-
-배정은 승객이 생긴 **그 순간의** nearest-car cost다. **Sticky**는 한 번 붙이면 고정, **Reassign**(Policy → Hall dispatch)은 매 틱 대기 홀콜을 다시 스코어한다.
-
-**예시** (seed 42, Stay, evening, sticky, tick ~650, IdleFrac 62%): E1이 `#76 @16→L1`을 들고 있는데 **E3/E4는 20층 IDLE**. 전체 스냅샷 + Batch N=100 sticky↔reassign 표는 [`INSIGHTS.md` §3](INSIGHTS.md#3-sticky-vs-reassign-hall-call-dispatch).
-
-**방법.** Policy를 바꾸기 전에 Batch N=100을 `benchmarks/`에 저장한 뒤 한 가지만 바꾸고 다시 돌린다. 기본 evening에서는 reassign이 Stay max wait는 줄였지만 mean wait “공짜 개선”은 아님(Mid는 악화).
-
-파킹(유휴 배치)과 **콜 배정**은 다른 레버다.
+Sticky 고정 / Reassign 매 틱 재스코어. seed 42 Stay: E1이 `#76@16`, E3/E4 IDLE@20. Evening N=100: Stay max↓, Mid mean↑. 표·스냅샷은 INSIGHTS.
 
 ## 전략 카탈로그
 
@@ -105,19 +94,14 @@ Batch N / Rank-by 로 레짐별 베이스라인 측정
 | Spread | 축을 따라 균등 홈 | 하행 피크(출근) |
 | Demand | call-heat 쪽 | 적응 휴리스틱 |
 
-연구/산업 쪽: arrival-probability parking, up-peak MDP 로비 대수, proactive standby, **zoning**(포화 시).
-
-**Batch N**: 현재 노브로 seed N개를 돌려 전략 mean/win-rate·CSV 로그를 만든다.
+**Batch N**: seed N개 mean/win-rate·CSV. CLI: `npm run batch:sticky` / `batch:reassign`.
 
 ## 조절 가능 파라미터
 
-**Policy**: Parking strategy, Hall dispatch (sticky | reassign); future: zoning  
+**Policy**: Parking strategy, Hall dispatch (sticky | reassign)  
 **Environment**: scenario seed, traffic period, interfloor %, door dwell, floors, elevators, capacity, arrival rate, target  
 **Playback**: sim speed; batch N
 
-## 이후 확장
+## 이후 확장 (보류)
 
-- **서비스 존** (홀수/짝수·저/고층) — 고부하 건물의 파킹 보완 레버
-- **Arrival-probability parking** / **dynamic lobby count** (MDP)
-- **층별 홀 capacity** (로비 vs 상층 대기 상한)
-- Building type (office), 층별 인구 가중치, 카 속도(층/틱), 묶음 도착, 에너지 지표
+포트폴리오 스토리가 필요할 때만: 서비스 존, arrival-probability parking, MDP 로비 대수, 층별 홀 capacity, office OD.
