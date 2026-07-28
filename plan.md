@@ -63,21 +63,33 @@ Collective **SCAN**: 진행 방향과 같은 홀콜만 정차·탑승. 턴어라
 
 컨트롤은 **Policy**(파킹; 이후 zoning) / **Environment**(건물·트래픽·seed) / **Playback**(속도)로 나뉜다.
 
+## Insights (요약)
+
+운영 인사이트 **업데이트 트리 + 예시**는 [`INSIGHTS.md`](INSIGHTS.md)가 원본이다.
+
+```text
+Environment → IdleFrac → Parking | Zoning(미래)
+                └─ sticky 홀콜 배정 → 재배정(미래)
+Batch N / Rank-by 로 레짐별 베이스라인 측정
+```
+
 ## Insight: 파킹이 먹히는 때
 
 유휴 구간이 있을 때 파킹 전략이 의미 있다. 한산·중간 부하에서는 Stay/Lobby/Mid/Spread/Demand가 avg wait·empty travel을 가른다. IdleFrac가 높을수록 파킹이 레짐을 가른다.
 
 **항상 풀가동**에 가까우면 차는 거의 파킹하지 않으므로 파킹 효과가 작아진다. 이때는 **서비스 존 분할**(홀수/짝수층, 저층/고층 뱅크)로 정차 수·도어 시간·왕복 거리를 줄이는 편이 낫다.
 
-이 데모는 고정 시나리오에서 **파킹만** 비교한다. Arrival rate를 올려 Compare all 하면 전략 간 차이가 줄어들고 IdleFrac가 떨어지는 경우가 많은데, 그건 “붐빌 때는 파킹이 아니라 존”이라는 힌트다.
+**예시.** 같은 seed에서 arrival rate를 올리고 Compare all → 전략 간 차이↓, IdleFrac↓.
+
+이 데모는 고정 시나리오에서 **파킹만** 비교한다.
 
 ## Insight: sticky 홀콜 배정
 
-배정은 승객이 생긴 **그 순간의** nearest-car cost다. **한 번 붙으면 고정** — 나중에 더 가까운 IDLE이 생겨도 홀콜을 뺏지 않는다.
+배정은 승객이 생긴 **그 순간의** nearest-car cost다. **한 번 붙으면 고정** — 나중에 더 가까운 IDLE이 생겨도 홀콜을 뺏지 않는다. SCAN이면 맡은 차가 현재 방향을 끝낸 뒤에야 반대 방향 픽업을 태울 수 있다.
 
-Copy debug에서 자주 보인다: Stay + evening이면 고층에 IDLE인 차가 있는데, 상행 중·만차인 차가 몇 층 아래 하행 콜을 들고 있는 식. SCAN이면 맡은 차가 현재 방향을 끝낸 뒤에야 반대 방향 픽업을 태울 수 있어 더 늦어진다.
+**예시** (seed 42, Stay, evening, tick 650, IdleFrac 62%): E1이 9층↑ load 4로 `#76 @16→L1`을 들고 있는데 **E3/E4는 20층 IDLE** — 16층까지는 E3/E4가 더 가깝다. `#76`은 `arr=619`에 E1에 붙었고 재배정되지 않음. 전체 스냅샷은 [`INSIGHTS.md` §3](INSIGHTS.md#3-sticky-hall-call-assignment).
 
-파킹(유휴 배치)과 **콜 재배정**은 다른 레버다. IdleFrac가 높은데 대기가 길면 “빈 차는 있는데 sticky dispatch가 안 넘긴다”는 신호다. 재배정/그룹 제어가 다음 실험 후보.
+파킹(유휴 배치)과 **콜 재배정**은 다른 레버다. IdleFrac↑·대기↑면 “빈 차는 있는데 sticky dispatch가 안 넘긴다”.
 
 ## 전략 카탈로그
 

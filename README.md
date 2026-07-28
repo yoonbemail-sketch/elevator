@@ -24,6 +24,7 @@ Open `index.html` in a browser (no build step).
 7. Metrics: avg/max wait (ticks), empty travel (floors), **IdleFrac** (saturation), ticks, completed
 8. **Batch N** — Monte Carlo over many seeds; CSV log + summary ranking
 9. Controls split into **Policy** (parking; future zoning) vs **Environment** (building/traffic/seed) vs **Playback**
+10. **[Operational insight tree](INSIGHTS.md)** — parking vs zoning, IdleFrac, sticky dispatch, Batch (each with an example)
 
 ## Strategy catalog
 
@@ -79,27 +80,32 @@ When a trip starts on an **upper floor**, this is the chance the destination is 
 
 Use a low value for “mostly go downstairs / come home”; raise it to stress mid-building stops.
 
-## Insight: when parking matters
+## Insights (summary)
+
+Canonical tree + examples: **[INSIGHTS.md](INSIGHTS.md)**  
+`Environment → IdleFrac regime → Parking | Zoning` and orthogonal **sticky hall-call dispatch → reassignment**.
+
+### When parking matters
 
 Parking strategies matter when cars spend time **idle**. Under light or moderate traffic, empty-travel and wait times move with Stay / Lobby / Mid / Spread / Demand.
 
 **IdleFrac** = (elevator-ticks in IDLE or PARKING) / (ticks × elevators). Live and Batch show this as a saturation diagnostic with a regime chip: **≥25%** → `parking-sensitive`, **&lt;10%** → `saturated` (zoning-sensitive hint), otherwise `mixed`. Ranking still uses avg wait (or the Rank-by toggle); IdleFrac is not an objective.
 
-Under **saturated** traffic, cars are almost always busy — they rarely park — so parking policy has little room to act. The useful lever shifts to **service zoning** (e.g. odd/even floors, low/high banks): fewer stops per trip, less door dwell waste, shorter round trips.
+Under **saturated** traffic, cars are almost always busy — they rarely park — so parking policy has little room to act. The useful lever shifts to **service zoning** (e.g. odd/even floors, low/high banks).
 
-This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — and IdleFrac drop — a hint that zoning, not parking, is the next experiment when the building is always full.
+**Example.** Same seed, raise arrival rate → Compare-all gaps shrink and IdleFrac drops.
 
-### Insight: sticky hall-call assignment
+### Sticky hall-call assignment
 
-Dispatch here is a simple nearest-car cost at the moment a passenger appears. **Assignments stick** — once a car owns a hall call, a later idle car that is closer does **not** steal it.
+Dispatch is nearest-car cost at passenger arrival; **assignments stick**. A later closer IDLE does not steal the call. SCAN delays opposite-direction pickups until the assigned car finishes its current direction.
 
-That shows up in Copy debug: e.g. evening Stay, cars idle at a high floor after alighting, while an up-bound loaded car still holds a down call a few floors below. SCAN makes it worse — the assigned car may finish the current direction before it can board that opposite-direction pickup.
+**Example** (seed 42, Stay, evening, tick 650, IdleFrac 62%): E1 MOVING @9↑ load 4 holds pickup `#76 @16→L1`, while **E3/E4 IDLE @20** are closer to 16. Cost *now* prefers E3/E4, but `#76` was assigned at `arr=619` and never moved. Full snapshot in [INSIGHTS.md §3](INSIGHTS.md#3-sticky-hall-call-assignment).
 
-So idle placement (parking) and **call reassignment** are separate levers. High IdleFrac with long waits often means “free cars exist, but sticky dispatch won’t hand them the call.” Reassignment / group control is a natural follow-on experiment.
+Parking and **call reassignment** are separate levers. High IdleFrac + long waits often means free cars exist, but sticky dispatch will not hand them the call.
 
 ### Batch experiment
 
-**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / Idle% / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat.
+**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / Idle% / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat. Use it to rank baselines *for this regime* (and try Rank-by empty vs wait).
 
 ## Ideas / later
 
