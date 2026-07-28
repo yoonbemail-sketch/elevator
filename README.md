@@ -89,12 +89,21 @@ Under **saturated** traffic, cars are almost always busy — they rarely park �
 
 This demo isolates **parking** on a fixed passenger stream. Raise arrival rate in Compare all and you should often see strategy gaps shrink — and IdleFrac drop — a hint that zoning, not parking, is the next experiment when the building is always full.
 
+### Insight: sticky hall-call assignment
+
+Dispatch here is a simple nearest-car cost at the moment a passenger appears. **Assignments stick** — once a car owns a hall call, a later idle car that is closer does **not** steal it.
+
+That shows up in Copy debug: e.g. evening Stay, cars idle at a high floor after alighting, while an up-bound loaded car still holds a down call a few floors below. SCAN makes it worse — the assigned car may finish the current direction before it can board that opposite-direction pickup.
+
+So idle placement (parking) and **call reassignment** are separate levers. High IdleFrac with long waits often means “free cars exist, but sticky dispatch won’t hand them the call.” Reassignment / group control is a natural follow-on experiment.
+
 ### Batch experiment
 
 **Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / Idle% / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat.
 
 ## Ideas / later
 
+- **Hall-call reassignment** — re-score unboarded assignments each tick so nearer idle cars can steal sticky calls
 - **Arrival-probability parking** — park from INC/INT/OUT-weighted origin distribution
 - **Dynamic lobby count** — MDP-style how many cars stay at lobby in up-peak
 - **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
