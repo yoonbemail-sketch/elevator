@@ -82,35 +82,25 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 ## Insights (summary)
 
-Canonical tree + examples: **[INSIGHTS.md](INSIGHTS.md)**  
-`Environment → IdleFrac regime → Parking | Zoning` and orthogonal **sticky hall-call dispatch → reassignment**.
+Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** — four takeaways, tree, Batch A/B table, scope freeze.
+
+1. **No universal parking winner** — regime-dependent (Batch + Rank-by).
+2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
+3. **Dispatch ≠ parking** — sticky orphans vs reassign thrash (Mid worse on N=100).
+4. **Batch before/after** one Policy change; stop before over-processing dispatch.
 
 ### When parking matters
 
-Parking strategies matter when cars spend time **idle**. Under light or moderate traffic, empty-travel and wait times move with Stay / Lobby / Mid / Spread / Demand.
+Parking strategies matter when cars spend time **idle**. **IdleFrac** = IDLE|PARKING car-ticks / (ticks × elevators): ≥25% parking-sensitive, &lt;10% saturated. Raise arrival → Compare-all gaps and IdleFrac often fall.
 
-**IdleFrac** = (elevator-ticks in IDLE or PARKING) / (ticks × elevators). Live and Batch show this as a saturation diagnostic with a regime chip: **≥25%** → `parking-sensitive`, **&lt;10%** → `saturated` (zoning-sensitive hint), otherwise `mixed`. Ranking still uses avg wait (or the Rank-by toggle); IdleFrac is not an objective.
+### Sticky vs reassign
 
-Under **saturated** traffic, cars are almost always busy — they rarely park — so parking policy has little room to act. The useful lever shifts to **service zoning** (e.g. odd/even floors, low/high banks).
-
-**Example.** Same seed, raise arrival rate → Compare-all gaps shrink and IdleFrac drops.
-
-### Sticky hall-call assignment
-
-Dispatch is nearest-car cost at passenger arrival. **Sticky** keeps the first car; **Reassign** (Policy → Hall dispatch) rescores waiting hall calls each tick so nearer IDLE can steal.
-
-**Example** (seed 42, Stay, evening, sticky, tick ~650, IdleFrac 62%): E1 MOVING ↑ holds pickup `#76 @16→L1`, while **E3/E4 IDLE @20** are closer. Full snapshot + **Batch N=100 sticky vs reassign table** in [INSIGHTS.md §3](INSIGHTS.md#3-sticky-vs-reassign-hall-call-dispatch).
-
-**Method.** Before changing a Policy lever, run Batch N=100 and save under `benchmarks/` (`npm run batch:sticky` / `batch:reassign`), then compare. On default evening, reassign cut Stay max wait but was not a free lunch on mean wait (Mid got worse).
+**Sticky** keeps the first car; **Reassign** rescores each tick. Seed 42 Stay: E1 holds `#76@16` while E3/E4 IDLE@20. Evening Batch N=100: Stay max wait improves under reassign; Mid mean wait worsens — myopic idle steal. Details + table in [INSIGHTS.md](INSIGHTS.md).
 
 ### Batch experiment
 
-**Batch N** (default 100) runs seeds `base … base+N−1` with current traffic knobs, each strategy headless, then shows mean wait / empty / Idle% / win-rate and downloads a CSV log. Re-run with the same base seed for a deterministic repeat. Use it to rank baselines *for this regime* (and try Rank-by empty vs wait).
+**Batch N** (default 100) over seeds `base…base+N−1`; CSV + Rank-by. CLI: `npm run batch:sticky` / `batch:reassign`.
 
-## Ideas / later
+## Ideas / later (not in progress)
 
-- **Service zoning** — odd/even or low/high floor banks for high-utilization buildings (complement to parking)
-- **Arrival-probability parking** — park from INC/INT/OUT-weighted origin distribution
-- **Dynamic lobby count** — MDP-style how many cars stay at lobby in up-peak
-- **Per-floor hall capacity** — limit how many waiting passengers can stack on each floor (lobby vs upper floors), so peak congestion and spillover become visible in metrics and the building view.
-- Building type (office OD), floor population weights, car speed (floors/tick), batch arrivals, energy metrics
+- Service zoning, arrival-probability parking, MDP lobby count, hall capacity, office OD — only if the portfolio story needs them.
