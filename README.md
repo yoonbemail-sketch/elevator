@@ -82,12 +82,16 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 ## Insights (summary)
 
-Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** · **[한국어](INSIGHTS.ko.md)** — four takeaways, capability tree, Batch A/B, scope freeze.
+Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** · **[한국어](INSIGHTS.ko.md)** — takeaways, limitations, interview Q&A, Batch A/B, scope freeze.
 
-1. **No universal parking winner** — regime-dependent (Batch + Rank-by).
+Regime evidence (evening / morning / saturated): **[benchmarks/REGIME.md](benchmarks/REGIME.md)** — `npm run batch:morning` · `npm run batch:higharrival`.
+
+1. **No universal parking winner** — evening Lobby, morning Spread; gaps collapse when IdleFrac is saturated.
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
 3. **Dispatch ≠ parking** — SCAN / same-dir boarding under the hood; sticky orphans vs reassign thrash (Mid worse on N=100).
 4. **Batch before/after** one Policy change; stop before over-processing dispatch.
+
+**Limitations:** synthetic Bernoulli arrivals, tick abstraction, distance+load cost (not group ETA), no real-building calibration — see INSIGHTS.
 
 ### When parking matters
 

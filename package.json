@@ -6,7 +6,9 @@
   "scripts": {
     "batch": "node tools/run-batch.mjs",
     "batch:sticky": "node tools/run-batch.mjs --dispatch sticky --n 100 --seed 42 --out benchmarks/sticky-n100-seed42",
-    "batch:reassign": "node tools/run-batch.mjs --dispatch reassign --n 100 --seed 42 --out benchmarks/reassign-n100-seed42"
+    "batch:reassign": "node tools/run-batch.mjs --dispatch reassign --n 100 --seed 42 --out benchmarks/reassign-n100-seed42",
+    "batch:morning": "node tools/run-batch.mjs --dispatch sticky --n 100 --seed 42 --peak morning --arrival 0.15 --out benchmarks/morning-n100-seed42",
+    "batch:higharrival": "node tools/run-batch.mjs --dispatch sticky --n 100 --seed 42 --peak evening --arrival 0.90 --target 200 --out benchmarks/higharrival-n100-seed42"
   },
   "repository": {
     "type": "git",
