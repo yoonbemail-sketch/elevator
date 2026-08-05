@@ -86,6 +86,8 @@ Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** · **[한국어](INSIGHTS.ko.m
 
 Regime evidence (evening / morning / saturated): **[benchmarks/REGIME.md](benchmarks/REGIME.md)** — `npm run batch:morning` · `npm run batch:higharrival`.
 
+Demo UX: suggested path under the title (Compare → Batch), Environment **regime presets** (Evening / Morning / High arrival), and IdleFrac + Stay−best gap on Compare/Batch results.
+
 1. **No universal parking winner** — evening Lobby, morning Spread; gaps collapse when IdleFrac is saturated.
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
 3. **Dispatch ≠ parking** — SCAN / same-dir boarding under the hood; sticky orphans vs reassign thrash (Mid worse on N=100).
