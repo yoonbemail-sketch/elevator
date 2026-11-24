@@ -9,7 +9,9 @@
       // resolve to /script.js. document.write(<base>) must run during parse.
       (function () {
         var path = location.pathname.replace(/\/index\.html$/i, '');
-        if (/\/elevator\/?$/.test(path)) {
+        // http(s) only: a local checkout in a folder named "elevator"
+        // (file:///…/elevator/index.html) must keep its own base.
+        if (/^https?:$/.test(location.protocol) && /\/elevator\/?$/.test(path)) {
           document.write('<base href="' + location.origin + '/elevator/">');
         }
       })();
