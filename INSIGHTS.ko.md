@@ -7,7 +7,7 @@ English: **[INSIGHTS.md](INSIGHTS.md)**
 
 ## Takeaways (먼저 읽기)
 
-1. **만능 최적 파킹은 없다.** Evening ingress → Batch N=100에서 평균 대기는 **Lobby**가 1위, Stay는 공차는 싸지만 느리다. Morning egress → **Spread**가 1위(축 커버), Lobby는 꼴찌. 순위는 트래픽에 따라 뒤집힌다 — [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
+1. **만능 최적 파킹은 없다.** Evening ingress → Batch N=100에서 평균 대기는 **Lobby**가 1위, Stay는 공차는 싸지만 느리다. Morning egress → 축 커버가 이긴다: **Optimized**(p-median) 1위, 베이스라인 중엔 Spread, Lobby는 꼴찌. 순위는 트래픽에 따라 뒤집힌다 — [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
 2. **파킹은 유휴가 있어야 한다.** **IdleFrac**(IDLE|PARKING car-ticks ÷ ticks×대수)를 쓴다. 높으면 parking-sensitive, 아주 낮으면 saturated → 다음 레버는 더 똑똑한 파킹이 아니라 **zoning**. High-arrival Batch(IdleFrac **5%**): Stay−best 대기 격차 **4.63 → 0.90**.
 3. **파킹 ≠ 홀 배정.** Sticky nearest-car는 만차에 먼 콜이 묶인 채 IDLE이 놀 수 있다 (seed 42, E1이 `#76@16` 보유, E3/E4는 20층 IDLE). **Reassign**은 고아 콜은 풀지만 근시안이라 Batch N=100에서 Mid 평균 대기가 *나빠졌다* (빈 차가 상행 중인 차의 일을 뺏음).
 4. **Policy 노브는 하나만 바꾸고 Batch N=100 before/after.** 산출물은 [`benchmarks/`](benchmarks/). 한 번 Replay로 최적화하지 말 것.
@@ -64,7 +64,7 @@ Policy: Parking              Policy: Zoning (문서만)
 | 레짐 | IdleFrac | Stay−best avgWait 격차 | avgWait 1위 |
 | --- | ---: | ---: | --- |
 | Evening (arr 15%, target 80) | 54% | 4.63 | Lobby |
-| Morning (arr 15%, target 80) | 50% | 4.16 | Spread |
+| Morning (arr 15%, target 80) | 50% | 4.83 | Optimized (베이스라인 중 Spread) |
 | High arrival (arr 90%, target 200) | **5%** | **0.90** | Mid (거의 동률) |
 
 전체 표: [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
@@ -173,7 +173,7 @@ Evening에서 지는 이유: p-median은 **다음 한 번의** 호출까지 거�
 OA / 분석 면접용 짧은 답변 골격.
 
 1. **왜 avg wait / max wait / empty travel를 나누나?**  
-   단일 최적 없음 — evening 대기는 Lobby, 공차는 Stay, morning은 Spread. Rank-by로 레짐별 tradeoff를 드러낸다.
+   단일 최적 없음 — evening 대기는 Lobby, 공차는 Stay, morning은 축 커버(Optimized, 다음 Spread). Rank-by로 레짐별 tradeoff를 드러낸다.
 
 2. **reassign에서 Mid 평균 대기가 나빠진 이유?**  
    근시안 idle steal: 빈 중간층 차가 상행 차가 en-route로 처리할 콜을 가로챔. Evening N=100: Mid 4.17 → **5.02** ([COMPARE](benchmarks/COMPARE.md)). Stay max는 고아 콜 해소로 개선.

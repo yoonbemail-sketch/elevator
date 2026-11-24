@@ -89,7 +89,7 @@ Regime evidence (evening / morning / saturated): **[benchmarks/REGIME.md](benchm
 
 Demo UX: suggested path under the title (Compare → Batch), Environment **regime presets** (Evening / Morning / High arrival), and IdleFrac + Stay−best gap on Compare/Batch results.
 
-1. **No universal parking winner** — evening Lobby, morning Spread; gaps collapse when IdleFrac is saturated.
+1. **No universal parking winner** — evening Lobby, morning Optimized (p-median) then Spread; gaps collapse when IdleFrac is saturated.
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
 3. **Dispatch ≠ parking** — SCAN / same-dir boarding under the hood; sticky orphans vs reassign thrash (Mid worse on N=100).
 4. **Batch before/after** one Policy change; stop before over-processing dispatch.

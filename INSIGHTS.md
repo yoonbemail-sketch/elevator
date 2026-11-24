@@ -7,7 +7,7 @@ Goal: separate levers, measure with Batch, stop before over-tuning dispatch.
 
 ## Takeaways (read this first)
 
-1. **No universal best parking policy.** Evening ingress → Lobby wins mean wait (Batch N=100); Stay is cheap on empty travel but slow. Morning egress → **Spread** ranks first (shaft coverage); Lobby is last. Rankings flip with traffic — see [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
+1. **No universal best parking policy.** Evening ingress → Lobby wins mean wait (Batch N=100); Stay is cheap on empty travel but slow. Morning egress → shaft coverage wins: **Optimized** (p-median) first, Spread best baseline; Lobby is last. Rankings flip with traffic — see [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
 2. **Parking needs idle time.** Use **IdleFrac** (IDLE|PARKING car-ticks ÷ ticks×cars). High → parking-sensitive; very low → saturated → next lever is **zoning**, not smarter parking. High-arrival Batch (IdleFrac **5%**): Stay−best wait gap shrinks from **4.63 → 0.90**.
 3. **Parking ≠ hall dispatch.** Sticky nearest-car can leave IDLE cars unused while a loaded car holds a far call (seed 42, `#76@16` on E1 while E3/E4 IDLE@20). Full **reassign** fixes orphans but is myopic — Mid mean wait got *worse* on Batch N=100 (idle cars steal work from productive up-trips).
 4. **Change one Policy knob; Batch N=100 before/after.** Artifacts under [`benchmarks/`](benchmarks/). Don’t optimize on a single replay.
@@ -64,7 +64,7 @@ Parking only acts when cars idle. Raise arrival (and keep the bank busy) → str
 | Regime | IdleFrac | Stay−best avgWait gap | 1st by avgWait |
 | --- | ---: | ---: | --- |
 | Evening (arr 15%, target 80) | 54% | 4.63 | Lobby |
-| Morning (arr 15%, target 80) | 50% | 4.16 | Spread |
+| Morning (arr 15%, target 80) | 50% | 4.83 | Optimized (Spread best baseline) |
 | High arrival (arr 90%, target 200) | **5%** | **0.90** | Mid (≈ tied pack) |
 
 Full table: [`benchmarks/REGIME.md`](benchmarks/REGIME.md).
@@ -173,7 +173,7 @@ Use it to practice **lever separation, fair A/B, and regime diagnostics**. For r
 Short answer spines for OA / analytics interviews.
 
 1. **Why split objectives (avg wait / max wait / empty travel) instead of one score?**  
-   No single optimum — Lobby wins evening wait, Stay wins empty travel, morning flips to Spread. Rank-by exposes tradeoffs per regime instead of hiding them in a weighted mash.
+   No single optimum — Lobby wins evening wait, Stay wins empty travel, morning flips to shaft coverage (Optimized, then Spread). Rank-by exposes tradeoffs per regime instead of hiding them in a weighted mash.
 
 2. **Why did Mid mean wait get worse under reassign?**  
    Myopic idle steal: empty mid cars grab calls that ascending cars would have served en route. Evening N=100: Mid avgWait 4.17 → **5.02** ([COMPARE](benchmarks/COMPARE.md)). Stay’s max wait improved (orphan fix).
