@@ -8,6 +8,8 @@ Forked from [boarding-sim](https://codingapple1.github.io/boarding-sim/) UI patt
 
 Open `index.html` in a browser (no build step).
 
+Visitors land in a **simple view**: one question, a one-line answer from the Batch evidence, time of day, where free elevators wait, and plain-language metrics. **Advanced mode** (button in the header, remembered per browser, or link `index.html?mode=advanced`) shows the full lab described below.
+
 ### Hosting
 
 - Portfolio: `/elevator/index.html` on the Vercel site
@@ -85,9 +87,9 @@ Use a low value for “mostly go downstairs / come home”; raise it to stress m
 
 Canonical wrap-up: **[INSIGHTS.md](INSIGHTS.md)** · **[한국어](INSIGHTS.ko.md)** — takeaways, limitations, interview Q&A, Batch A/B, scope freeze.
 
-Regime evidence (evening / morning / saturated): **[benchmarks/REGIME.md](benchmarks/REGIME.md)** — `npm run batch:morning` · `npm run batch:higharrival`.
+Regime evidence (evening / morning / midday / saturated): **[benchmarks/REGIME.md](benchmarks/REGIME.md)** — `npm run batch:morning` · `npm run batch:midday` · `npm run batch:higharrival`.
 
-Demo UX: suggested path under the title (Compare → Batch), Environment **regime presets** (Evening / Morning / High arrival), and IdleFrac + Stay−best gap on Compare/Batch results.
+Demo UX: **simple view** by default (answer card + plain labels); **Advanced mode** adds the suggested path (Compare → Batch), Environment **regime presets** (Evening / Morning / Midday / High arrival), and IdleFrac + Stay−best gap on Compare/Batch results.
 
 1. **No universal parking winner** — evening Lobby, morning Optimized (p-median) then Spread; gaps collapse when IdleFrac is saturated.
 2. **IdleFrac** tells parking-sensitive vs saturated (then zoning, not parking).
