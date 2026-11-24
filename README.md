@@ -15,7 +15,7 @@ Open `index.html` in a browser (no build step).
 
 ## Features
 
-1. Parking strategies: Stay / Lobby / Mid / Spread / Demand
+1. Parking strategies: Stay / Lobby / Mid / Spread / Demand / **Optimized** (p-median, Gurobi)
 2. **Fixed scenario seed** — same passenger stream across runs
 3. **Compare all** — headless strategy table on one scenario (browser-side, instant)
 4. Apartment traffic: morning / evening / midday + interfloor %
@@ -39,6 +39,7 @@ There is **no universal optimal parking strategy**. Like airplane boarding metho
 | **Mid** | Building midpoint | Generic compromise |
 | **Spread** | Even home floors along the shaft | Down-peak / egress — cover upper arrivals |
 | **Demand** | Recent call-heat floors (spread coverage) | Adaptive heuristic toward busy landings |
+| **Optimized** | p-median floors for the current period and idle-car count k ([INSIGHTS §5](INSIGHTS.md#5-optimized-parking-p-median-gurobi)) | Morning / midday; regenerate with `tools/optimize_parking.py` |
 
 ### Research / industry directions (not all coded)
 

@@ -38,7 +38,7 @@ IdleFrac regime ──► parking-sensitive | mixed | saturated
         │                         │
         ▼                         ▼
 Policy: Parking              Policy: Zoning (docs only)
-  Stay·Lobby·Mid·Spread·Demand
+  Stay·Lobby·Mid·Spread·Demand·Optimized (p-median)
   panel: Policy | Environment | Playback
                                   │
                                   ▼
@@ -116,6 +116,41 @@ Reassign helps Stay’s long tail; Mid loses because empty mid cars greedily ste
 Baselines: Stay / Lobby / Mid / Spread / Demand. Batch N + Rank-by answers “who wins *this* regime?” — not a global optimum.
 
 Policy vs Environment vs Playback panels keep future zoning in the right place without building it yet.
+
+## 5. Optimized parking (p-median, Gurobi)
+
+`tools/optimize_parking.py` solves a **p-median** model offline in gurobipy; the simulator looks the answer up at run time (`data/optimized-parking.json`).
+
+**Model** — for each traffic period, height *F* and number of idle cars *k*:
+
+```text
+w_i   = P(next call originates at floor i)        — exactly pickOrigin():
+        lobby share p (morning .10 / evening .90 / midday .45), rest uniform over 2..F
+y_j   ∈ {0,1}  park a car at floor j
+x_ij  ∈ [0,1]  origin i served by the car parked at j
+
+min   Σ_i Σ_j  w_i · |i − j| · x_ij          expected floors from nearest parked car to the next call
+s.t.  Σ_j x_ij = 1           ∀ i              every origin is covered
+      x_ij ≤ y_j             ∀ i, j           only by an open parking floor
+      Σ_j y_j = k                             k idle cars
+```
+
+Solved for all UI settings (3 periods × F 8–40 × k 1–8 = 792 MIPs, ~5 s); each matches an exact 1-D DP. Example, F=20, k=4: morning `[2, 7, 13, 18]`, evening `[1, 6, 11, 17]`, midday `[1, 7, 12, 18]`.
+
+**Runtime rule:** k = cars currently IDLE|PARKING. Sort those cars and the k floors, match in order (min-travel matching on a line; no target swapping).
+
+Batch N=100, seeds 42…141, sticky, 20F · 4 cars · arrival 15%:
+
+| Period | Optimized avgWait | Best baseline | Optimized rank |
+| --- | ---: | --- | ---: |
+| Morning | **3.69** | Spread 4.36 | 1 |
+| Midday | **2.74** | Spread 3.18 | 1 |
+| Evening | 1.75 | Lobby 1.60 | 3 (best max wait 13.7 vs 18.1) |
+| High arrival (90%) | 34.44 | Mid 34.43 | ≈ tie (saturated) |
+
+Why evening loses: p-median optimizes distance to the **next** call only. With 90% lobby origins, Lobby stacks every idle car at L1 and absorbs *bursts*; p-median keeps one car there and spreads the rest for upper-floor coverage — better tail, slightly worse mean. A queueing-aware objective (or k-dependent lobby count, the MDP direction) is the next step. Optimized also spends the most empty travel — it rebalances whenever k changes.
+
+Regenerate: `.venv/bin/python tools/optimize_parking.py` (writes the JSON plus a `.js` mirror so `index.html` still works over `file://`).
 
 ---
 
