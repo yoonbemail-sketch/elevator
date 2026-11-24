@@ -56,6 +56,13 @@ function loadSim() {
     globalThis.window = window;
     globalThis.document = document;
     const nav = { clipboard: null };
+    // Optimized parking table (browser loads the .js mirror via <script>)
+    const optPath = path.join(root, 'data', 'optimized-parking.json');
+    if (fs.existsSync(optPath)) {
+        globalThis.OPTIMIZED_PARKING_DATA = JSON.parse(fs.readFileSync(optPath, 'utf8'));
+    } else {
+        console.error('warn: data/optimized-parking.json missing — run tools/optimize_parking.py');
+    }
     // Classic script expects browser globals
     const code = fs.readFileSync(path.join(root, 'script.js'), 'utf8');
     // eslint-disable-next-line no-new-func
